@@ -19,12 +19,13 @@
 
 #ifndef STDAFX_H
 #define STDAFX_H
-
-#ifdef VTFLIB_EXPORTS
-#	define VTFLIB_API __declspec(dllexport)
+#define VTFLIB_STATIC
+#ifdef VTFLIB_STATIC
+#define VTFLIB_API
 #else
-#	define VTFLIB_API __declspec(dllimport)
+
 #endif
+
 
 // Custom data types
 typedef unsigned char	vlBool;				//!< Boolean value 0/1.

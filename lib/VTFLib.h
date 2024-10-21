@@ -12,12 +12,12 @@
 #ifndef VTFLIB_H
 #define VTFLIB_H
 
-#ifdef VTFLIB_EXPORTS
-#define VTFLIB_API __declspec(dllexport)
+#define VTFLIB_STATIC
+#ifdef VTFLIB_STATIC
+#define VTFLIB_API
 #else
-#define VTFLIB_API __declspec(dllimport)
-#endif
 
+#endif
 typedef unsigned char	vlBool;
 typedef char			vlChar;
 typedef unsigned char	vlByte;

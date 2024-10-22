@@ -8,17 +8,22 @@ typedef void* (*CreateInterfaceFn)(const char* pName, int* pReturnCode);
 class IVTex
 {
 public:
-    virtual void FUCKOFF();
+    virtual int FUCKOFF(int x , int y , int z) = 0;
     // For use by command-line tools
     virtual int VTex(int argc, char** argv) = 0;
 };
+
+
+int dummy_function(int x, int y ,int z) {
+    return x + y * y / z;
+}
 
 // Simplified VTex function - only handles TGA to VTF conversion
 int ProcessVTexConversion(int argc, char* argv[]) {
     if (argc < 2) { // Need at least the input file
         return -1; // Indicate error (you might want to define specific error codes)
     }
-
+    printf("hello from vtf");
     vlInitialize();
     ilInit();
 
@@ -34,18 +39,24 @@ int ProcessVTexConversion(int argc, char* argv[]) {
     ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
 
     SVTFCreateOptions options;
+    
     vlImageCreateDefaultCreateStructure(&options);
+    vlCreateImage(&imageHandle);
+    vlBindImage(imageHandle);
+
     options.ImageFormat = IMAGE_FORMAT_DXT5; // Or choose the format you need
     vlImageCreateSingle(ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), ilGetData(), &options);
 
     char outputFile[512];
     strcpy_s(outputFile, sizeof(outputFile), argv[argc - 1]);
     char* ext = strrchr(outputFile, '.');
+    printf("ext %s \n", outputFile);
     if (ext) {
         strcpy_s(ext, sizeof(outputFile) - (ext - outputFile), ".vtf");
     }
     vlImageSave(outputFile);
-
+   
+    printf("last error %s\n", vlGetLastError());
     vlDeleteImage(imageHandle);
     vlShutdown();
     ilShutDown();
@@ -58,8 +69,10 @@ int ProcessVTexConversion(int argc, char* argv[]) {
 // IVTex implementation
 class CVTex : public IVTex {
 public:
-    virtual void FUCKOFF() override {
-
+    virtual int FUCKOFF(int x,int y,int z) override {
+        auto value = dummy_function(x,y,z);
+        value *= x + y + z;
+        return value;
     }
     virtual int VTex(int argc, char** argv) override {
         return ProcessVTexConversion(argc, argv);
@@ -87,6 +100,3 @@ extern "C" __declspec(dllexport) void* CreateInterface(const char* pName, int* p
     return nullptr;
 }
 
-void IVTex::FUCKOFF()
-{
-}
